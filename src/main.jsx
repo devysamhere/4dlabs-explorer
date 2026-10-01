@@ -1,0 +1,56 @@
+import React,{useState} from 'react';
+import {createRoot} from 'react-dom/client';
+import {ArrowLeft,ArrowUpRight,Box,CheckCircle2,Clock3,Cpu,ExternalLink,Layers3,ScanLine,ShieldCheck,Sparkles,Workflow} from 'lucide-react';
+import {pipeline,products,tracking,history,coverage} from './data/registry';
+import './styles.css';
+
+function Status({children,tone='live'}){return <span className={'status '+tone}><i/>{children}</span>}
+function App(){
+ const [tab,setTab]=useState('Overview');
+ const [detail,setDetail]=useState(null);
+ const tabs=['Overview','Data Engine','Ecosystem','Sources'];
+ return <div className="app">
+  <header><div className="brand"><div className="mark">4D</div><div><b>4Dlabs</b><span>EXPLORER</span></div></div><nav>{tabs.map(t=><button className={tab===t?'active':''} onClick={()=>setTab(t)} key={t}>{t}</button>)}</nav><a className="official" href="https://4dlabs.space/" target="_blank" rel="noreferrer">4Dlabs <ExternalLink size={14}/></a></header>
+  <main>
+   <section className="hero"><div className="heroCopy"><div className="kicker"><Status>COMMUNITY BUILT</Status><span>Independent dashboard · Not affiliated with 4Dlabs</span></div><h1>4Dlabs <em>Explorer</em></h1><p>A public view of the infrastructure turning real-world capture into verified data, models and physical-AI applications.</p><div className="heroActions"><a className="primaryBtn" href="https://4dlabs.space/" target="_blank" rel="noreferrer">Explore 4Dlabs <ArrowUpRight size={15}/></a><button className="ghostBtn" onClick={()=>setTab('Data Engine')}>View Data Engine</button></div></div><div className="heroVisual"><img src="https://4dlabs.space/_next/static/media/hero-human-machine.3keih8jt0dgzh.webp" alt="4Dlabs human and robotic hand visual"/><div className="updated"><Clock3 size={16}/><div><span>LAST REVIEWED</span><b>01 Oct 2026</b></div></div></div></section>
+
+   {tab==='Overview'&&<>
+    <section className="metrics">
+     <Metric icon={ScanLine} label="FLAGSHIP CAPTURE" value="Ego Suite" sub="In production"/>
+     <Metric icon={ShieldCheck} label="DATA PROVENANCE" value="Verified" sub="Rights registered on-chain"/>
+     <Metric icon={Cpu} label="WORLD MODEL" value="AXON" sub="Calibrate · scale · simulate"/>
+     <Metric icon={Box} label="PHONE CAPTURE" value="Coming soon" sub="3D spatial scanning" tone="pending"/>
+    </section>
+    <section className="grid two">
+     <article className="panel engine"><div className="panelHead"><div><span className="eyebrow">DATA ENGINE</span><h2>From capture to distribution</h2></div><Status>DOCUMENTED</Status></div><p className="lead">One pipeline for collecting, verifying, processing and distributing real-world embodied data.</p><div className="pipeline">{pipeline.map(([a,b],i)=><button className="pipe clickable" key={a} onClick={()=>{setTab('Data Engine');setDetail(a)}}><div className="num">0{i+1}</div><div><b>{a}</b><span>{b}</span></div></button>)}</div></article>
+     <article className="panel"><div className="panelHead"><div><span className="eyebrow">CORE TECHNOLOGY</span><h2>Physical AI stack</h2></div></div><div className="techStack"><Tech icon={Layers3} name="ViTam" text="Visual-tactile fusion for contact forces and material response."/><Tech icon={Workflow} name="Cross-embodiment" text="Adaptation across robot arms, humanoids and quadrupeds."/><Tech icon={Sparkles} name="AXON" text="Physically consistent world-model and skill-model training."/></div></article>
+    </section>
+    <section className="grid lower">
+     <article className="panel"><div className="panelHead"><div><span className="eyebrow">PRODUCT STATUS</span><h2>Capture network</h2></div></div><div className="products">{products.map((p,i)=><div className="product" key={p.name}><div className="productIcon">{i===0?<ScanLine size={18}/>:<Box size={18}/>}</div><div><b>{p.name}</b><span>{p.detail}</span></div><small className={p.status==='Coming soon'?'wait':''}>{p.status}</small></div>)}</div></article>
+     <article className="panel"><div className="panelHead"><div><span className="eyebrow">NETWORK VISIBILITY</span><h2>What Explorer will measure</h2></div></div><p className="lead small">Metrics appear when 4Dlabs exposes a verifiable public source. Until then, Explorer shows product and network status without invented totals.</p><div className="trackingMini">{tracking.map(x=><div key={x.name}><b>{x.name}</b><span>{x.metrics.slice(0,3).join(' · ')}</span></div>)}</div></article>
+    </section>
+    <section className="panel coveragePanel"><div className="panelHead"><div><span className="eyebrow">PUBLISHED DATA COVERAGE</span><h2>Application data profiles</h2></div><a className="miniLink" href="https://4dlabs.space/#marketplace" target="_blank" rel="noreferrer">Official source <ArrowUpRight size={13}/></a></div><p className="lead">Modalities and scale descriptions published by 4Dlabs for its B2B data marketplace. Values marked “sample” are examples, not network totals.</p><div className="coverageGrid">{coverage.map(x=><div className="coverageCard" key={x.sector}><b>{x.sector}</b><span>{x.modality}</span><small>{x.scale}</small></div>)}</div></section>
+    <section className="history"><div><span className="eyebrow">PAST COMMUNITY MILESTONE</span><b>4Dlabs Alpha campaign</b><span>Completed September 29, 2026 · Galxe</span></div><a href={history.alpha.url} target="_blank" rel="noreferrer">View archive <ArrowUpRight size={14}/></a></section>
+   </>}
+
+   {tab==='Data Engine'&&<section className="page">{detail&&<Detail title={detail} onClose={()=>setDetail(null)} tracking={tracking}/>}<div className="pageTitle"><span className="eyebrow">NETWORK LIFECYCLE</span><h2>Data Engine</h2><p>The public architecture of the 4Dlabs data layer, with the measurements that can be surfaced as public feeds become available.</p></div><div className="engineRows">{tracking.map((x,i)=><article className="engineRow clickableRow" key={x.name} onClick={()=>setDetail(x.name)}><div className="step">0{i+1}</div><div className="rowMain"><b>{x.name}</b><span>{x.description}</span></div><div className="metricTags">{x.metrics.map(m=><span key={m}>{m}</span>)}</div><Status tone="pending">AWAITING PUBLIC DATA</Status></article>)}</div></section>}
+
+   {tab==='Ecosystem'&&<section className="page">{detail&&<EcoDetail title={detail} onClose={()=>setDetail(null)}/>}<div className="pageTitle"><span className="eyebrow">PHYSICAL AI</span><h2>Ecosystem</h2><p>The products, technology modules and application surfaces documented by 4Dlabs.</p></div><div className="ecosystemGrid"><Eco title="Ego Suite" onClick={()=>setDetail('Ego Suite')} tag="In production" text="Head-mounted multimodal capture plus hand-motion and tactile-pressure sensing."/><Eco title="Phone 3D Scanning" onClick={()=>setDetail('Phone 3D Scanning')} tag="Coming soon" text="Accessible spatial capture from phones, feeding the same data engine."/><Eco title="ViTam" onClick={()=>setDetail('ViTam')} tag="Core technology" text="Fuses vision and touch so demonstrations include contact and material response."/><Eco title="Cross-embodiment" onClick={()=>setDetail('Cross-embodiment')} tag="Core technology" text="Maps data across robot arms, humanoids and quadrupeds."/><Eco title="AXON" onClick={()=>setDetail('AXON')} tag="Core technology" text="World-model engine built around a calibrate, scale and simulate loop."/><Eco title="Data Marketplace" onClick={()=>setDetail('Data Marketplace')} tag="B2B" text="Task-specific embodied datasets and custom capture campaigns for industry."/></div></section>}
+
+   {tab==='Sources'&&<section className="page"><div className="pageTitle"><span className="eyebrow">METHODOLOGY</span><h2>Sources & verification</h2><p>Explorer distinguishes documented capabilities from live measured network activity. No unofficial token, contract, wallet, geography or network total is presented as fact.</p></div><div className="sources"><Source name="4Dlabs official site" what="Data Engine, product status, core technologies, marketplace and application areas" url="https://4dlabs.space/"/><Source name="4Dlabs documentation" what="Technical and product documentation" url="https://docs.4dlabs.space/"/><Source name="4Dlabs Terms" what="Capture, contributor, dataset, API, marketplace, reward and experimental blockchain service surfaces" url="https://4dlabs.space/terms-of-service/"/><Source name="4Dlabs Alpha · Galxe" what="Archived community campaign; retained only as a historical milestone" url={history.alpha.url}/></div></section>}
+  </main><footer><span>Community-built dashboard · Not affiliated with 4Dlabs · Verified sources only</span><a href="https://x.com/Breaking_Gud_" target="_blank" rel="noreferrer">Built by @Breaking_Gud_ <ArrowUpRight size={12}/></a></footer>
+ </div>
+}
+function Metric({icon:Icon,label,value,sub,tone}){return <div className="metric"><div className="metricIcon"><Icon size={20}/></div><div><div className="eyebrow">{label}</div><div className="metricValue">{value}</div><div className="metricSub">{sub}</div></div>{tone&&<Status tone={tone}>STATUS</Status>}</div>}
+function Tech({icon:Icon,name,text}){return <div className="tech"><div><Icon size={18}/></div><section><b>{name}</b><span>{text}</span></section></div>}
+function Eco({title,tag,text,onClick}){return <button className="eco" onClick={onClick}><span className="eyebrow">{tag}</span><h3>{title}</h3><p>{text}</p><span className="openDetail">View details <ArrowUpRight size={12}/></span></button>}
+function Detail({title,onClose,tracking}){const x=tracking.find(v=>v.name===title);if(!x)return null;return <div className="detailPanel"><button className="backBtn" onClick={onClose}><ArrowLeft size={14}/> Back</button><span className="eyebrow">DATA ENGINE · DOCUMENTED ARCHITECTURE</span><h3>{x.name}</h3><p>{x.description}</p><div className="detailTags">{x.metrics.map(m=><span key={m}>{m}</span>)}</div><small>Live totals are shown only when a verifiable public source exists.</small></div>}
+function EcoDetail({title,onClose}){const info={
+'Ego Suite':['In production / Flagship','Head-mounted multimodal capture with hand-motion and tactile-pressure sensing.'],
+'Phone 3D Scanning':['Coming soon','Phone-based spatial capture designed to feed the 4Dlabs data engine.'],
+'ViTam':['Core technology','Visual-tactile fusion for contact forces and material response.'],
+'Cross-embodiment':['Core technology','Adaptation of embodied data across robot arms, humanoids and quadrupeds.'],
+'AXON':['Core technology','World-model engine built around calibrate, scale and simulate.'],
+'Data Marketplace':['B2B','Task-specific embodied datasets and custom capture campaigns for industry.']}[title];if(!info)return null;return <div className="detailPanel"><button className="backBtn" onClick={onClose}><ArrowLeft size={14}/> Back</button><span className="eyebrow">{info[0]}</span><h3>{title}</h3><p>{info[1]}</p><a className="miniLink" href="https://4dlabs.space/" target="_blank" rel="noreferrer">Official 4Dlabs source <ArrowUpRight size={13}/></a></div>}
+function Source({name,what,url}){return <div className="source"><CheckCircle2 size={18}/><div><b>{name}</b><span>{what}</span></div><a href={url} target="_blank" rel="noreferrer"><ExternalLink size={16}/></a></div>}
+createRoot(document.getElementById('root')).render(<App/>);
